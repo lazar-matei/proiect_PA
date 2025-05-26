@@ -26,11 +26,7 @@ struct nod{
 };
 typedef struct nod Node;
 
-struct stack_node{
-    Node *top;
-    struct stack_node *next;
-};
-typedef struct stack_node stackNode;
+
 
 struct tree{
     //char *grila;
@@ -40,7 +36,23 @@ struct tree{
 };
 typedef struct tree T_Node;
 
+struct adj{
+    Poz v;
+    int val_adi;
+};
+typedef struct adj ADJ;
 
+struct graph{
+    int V, E;
+    int *adi;
+};
+typedef struct graph GRAPH;
+
+struct stack_comp_conex{
+    Node *top;
+    struct stack_comp_conex *next;
+};
+typedef struct stack_comp_conex Node_Conex;
 
 
 void citire_f_in(FILE *f_in, int *task, int *col, int *lin, int *gen, char **matr);
@@ -56,6 +68,15 @@ void deleteStack(Node** top);
 void fprintStack(Node* top, FILE* f_out);
 void printStack(Node* top);
 void invertStack(Node**top);
+
+int isEmpty_conex(const Node_Conex* top);
+void push_conex(Node_Conex** top, Node *v);
+Node* pop_conex(Node_Conex **top);
+void deleteStack_conex(Node_Conex** top);
+void fprintStack_conex(Node_Conex* top, FILE* f_out);
+void printStack_conex(Node_Conex* top);
+void invertStack_conex(Node_Conex**top);
+
 void preord_afis(T_Node *root, FILE *fout, int lin, int col);
 char* rule1(char *matr, int lin, int col, Node **top);
 char* rule2(char *matr, int lin, int col, Node **top);

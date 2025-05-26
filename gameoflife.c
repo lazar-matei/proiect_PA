@@ -57,6 +57,10 @@ int main(int argc, const char *argv[])
         changeNprint(f_out, grila1, nr_linii, nr_coloane, root);
         free(grila1);
     }
+    if(nr_task == TASK4)
+    {
+        
+    }
     fclose(f_in);
     fclose(f_out);
     free(grila);

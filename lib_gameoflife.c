@@ -341,3 +341,298 @@ void changeNprint(FILE *f,char *grila, int lin, int col, T_Node *root)
     free(grila2);
 
 }
+
+
+
+int isEmpty_conex(const Node_Conex *top)
+{
+    return(top == NULL);
+}
+
+void push_conex(Node_Conex** top, Node *v)
+{
+    Node_Conex* newNode = (Node_Conex*)malloc(sizeof(Node_Conex));
+    newNode->top = v;
+    newNode->next = *top;
+    *top = newNode;
+
+}
+
+Node* pop_conex(Node_Conex **top)
+{
+    if (isEmpty_conex(*top)) 
+        return NULL;
+    Node_Conex *temp = (*top);
+    Node* aux = temp->top;
+    *top = (*top)->next;
+    deleteStack(&temp->top);
+    free(temp);
+    return aux;
+}
+
+
+void deleteStack_conex(Node_Conex** top)
+{
+    while ((*top) != NULL) {  
+        Node_Conex* temp;
+        temp = *top;
+        *top = (*top)->next;
+        deleteStack(&temp->top);
+        free(temp);
+    }
+}
+
+
+void fprintStack_conex(Node_Conex* top, FILE* f_out)
+{
+
+}
+
+
+void printStack_conex(Node_Conex* top)
+{
+
+}
+
+
+void invertStack_conex(Node_Conex**top)
+{
+
+
+}
+
+
+
+
+
+
+
+
+int inViata(char *grila, int lin, int col, Poz **elemente_graph)
+{
+    int vii = 0;
+    (*elemente_graph) = NULL;
+    for(int i = 0; i< lin; i++)
+    {
+        for(int j = 0; j< col; j++)
+        {
+            if(*(grila + i*col + j) == 'X')
+            {
+                vii++;
+                Poz v;
+                v.linie = i;
+                v.coloana = j;
+                (*elemente_graph) = (Poz*)realloc((*elemente_graph), vii*sizeof(Poz));
+                (*((*elemente_graph) + vii - 1)) = v;
+            }
+        }
+    }
+    return vii;
+}
+
+int vecini(Poz a, Poz b)
+{
+    if(a.linie-1 == b.linie)
+    {
+        if((a.coloana -1 == b.coloana)||(a.coloana == b.coloana)||(a.coloana+1 == b.coloana))
+        return 1;
+
+    }
+    else if(a.linie == b.linie)
+    {
+        if((a.coloana -1 == b.coloana)||(a.coloana == b.coloana)||(a.coloana+1 == b.coloana))
+        return 1;
+
+    }
+    else if(a.linie +1 == b.linie)
+    {
+        if((a.coloana -1 == b.coloana)||(a.coloana == b.coloana)||(a.coloana+1 == b.coloana))
+        return 1;
+
+    }
+    return 0;
+}
+
+void createGfromVector(Poz *elemente_graph, int vii, GRAPH *g)
+{
+    g->V = vii;
+    g->E = 0;
+    g->adi = (int *)calloc(vii*vii, sizeof(int));
+    for(int i=0; i<vii; i++)
+    {
+        for(int j=0; i<vii; j++)
+        {
+            *(g->adi + i*vii + j) = vecini(elemente_graph[i], elemente_graph[j]);
+            if(vecini(elemente_graph[i], elemente_graph[j]))
+            {
+                g->E++;
+            }
+        }
+    }
+    g->E=g->E/2;
+}
+
+
+
+
+
+void DFS_scan(GRAPH *g, int visited[], int i, Node **top) {
+    int j;
+    visited[i] = 1;
+    Poz v;
+    v.coloana = i;
+    push(top, v);
+    printf("Nodul %d -> ", i);
+    for (j = 0; j < g->V; j++) 
+        if (*(g->adi + i*g->V + j) == 1 && visited[j] == 0)
+            DFS_scan(g, visited, j, top);
+}
+
+int DFS(GRAPH *g, Node_Conex **top_conex) {
+    int i, comp_conexe = 0;
+    int *visited = (int*)calloc(g->V, sizeof(int));
+    for (i = 0; i < g->V; i++) 
+        if (visited[i] == 0) {
+            Node *aux;
+            aux=NULL;
+            DFS_scan(g, visited, i, &aux);
+            comp_conexe++;
+            invertStack(&aux);
+            push_conex(top_conex, aux);
+            printf("\n");
+        }
+    
+    return comp_conexe;
+}
+
+
+int convertStack2Vector(Node **top, int *v)
+{
+    int n=0;
+    while(!isEmpty(*top))
+    {
+        n++;
+        v = (int*)realloc(v, n*sizeof(int));
+        v[n-1] = pop(top).coloana;
+    }
+    return n;
+}
+
+/*
+
+int lant_Hamiltonian(int *adi, int varfuri, int nr_noduri, int *v, int **path, FILE *f_out)
+{
+    int *dp;
+    dp = (int*)calloc(nr_noduri * (1 << nr_noduri), sizeof(int));
+    (*path) = (Node*)calloc(nr_noduri*(1<<nr_noduri), sizeof(int));
+    
+    for(int i = 0; i<nr_noduri; i++)
+    {
+        *(dp + i*(1<<nr_noduri) + (1<<i)) = 1;
+        *((*path)+i*(1<<nr_noduri)+i) = -1;
+    }
+
+    for(int i=0; i< ( 1<<nr_noduri ) ; i++)
+    {
+        for(int j=0; j<nr_noduri; j++)
+        {
+            if(i & (1<<j))
+            {
+                for(int k=0; k< nr_noduri; k++)
+                {
+                    if(i & (1<<k) && *(adi + v[k]*varfuri + v[j]) && j!=k && *(dp + k*(1<<nr_noduri) + (i ^ (1<<j))))
+                    {              
+                        *(dp + j*(1<<nr_noduri) + i) = 1;
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i<nr_noduri; i++)
+    {
+        if(*(dp + i*(1<<nr_noduri) + (1<<nr_noduri) -1 ))
+        {
+            fprintStack(*top[i], f_out);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+*/
+
+int bk(int current, int *nr_vizitati, int *visited, GRAPH *g, int *de_vizitat, int nr_de_vizitat, int **path)
+{
+
+    if(*nr_vizitati == nr_de_vizitat)
+    {
+        return 1;
+    }
+    *nr_vizitati++;
+    *path = realloc(*path, *nr_vizitati);
+    *((*path)+(*nr_vizitati)-1) = current;
+    for(int urm=0; urm<nr_de_vizitat; urm++)
+    {
+        int urm_fr = de_vizitat[urm];
+        if(*(g->adi + current*g->V + urm_fr)&& !visited[urm_fr])
+        {
+            visited[urm_fr] = 1;
+            if(bk(urm_fr, nr_vizitati, visited, g, de_vizitat, nr_de_vizitat, path))
+            {
+                return 1;
+            }
+            visited[urm_fr] = 0;
+        }
+    }
+    return 0;
+}
+
+int hamilton(GRAPH *g, int *de_vizitat, int nr_de_vizitat, int **path)
+{
+    int *visited, nt_visited;
+    visited = (int*)calloc(nr_de_vizitat, sizeof(int));
+    *path = NULL;
+    for(int i=0; i<nr_de_vizitat; i++)
+    {
+        int start = de_vizitat[i];
+        for(int j=0; j<nr_de_vizitat; j++)
+        {
+            visited[j] = 0;
+        }
+        visited[start] =1;
+        nt_visited = 1;
+        if(bk(start, &nt_visited, visited, g, de_vizitat, nr_de_vizitat, path))
+        {
+            return 1;
+        }
+        
+    }
+    return -1;
+}
+
+void preord_rez_gen1(T_Node *root, int lin, int col, char *grila)
+{
+    if(root->left)
+    {
+        char *grila1 = NULL;
+        char *grila2 = NULL;
+        
+        grila1 = rule2(grila, lin, col, &root->left->stack);
+        grila2 = rule1(grila, lin, col, &root->right->stack);
+        
+       
+        if (root->generatie>0) 
+        {
+            free(grila);
+        }
+        
+       
+        preord_rez_gen(root->left, lin, col, grila1);
+        preord_rez_gen(root->right, lin, col, grila2);
+    }
+    else if (root->generatie > 0) 
+            free(grila);
+            
+}
