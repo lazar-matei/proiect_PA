@@ -4,3 +4,55 @@ it should be replaced with a clever version in the future
 operating mode:
 1. config the checker
 2. run the checker
+
+
+functions description:
+void citire_f_in(FILE *f_in, int *task, int *col, int *lin, int *gen, char **matr);	--> receives the input
+void scriere_f_out( FILE *f_out, char *matr, int lin, int col);				--> prints the output matrix
+VECIN stare_vecini(char *matr, int poz_coloana, int poz_linie, int col, int lin);	--> checks how many alive neighbours does a cell have
+void copy_matr(char *matr, char *cpy_matr, int lin, int col);				--> make a copy for a given matrix
+void rez_generatie(char *matr, int lin, int col, Node **top);				--> compiles the next generation matrix (used in task1 and task2)
+
+int isEmpty(const Node* top);								-->checks if stack is empty
+void push(Node** top, Poz v);								-->push in stack
+Poz pop(Node **top);									-->pops
+void deleteStack(Node** top);								-->
+void fprintStack(Node* top, FILE* f_out);						-->
+void printStack(Node* top);								-->
+void invertStack(Node**top);								-->
+
+int isEmpty_conex(const Node_Conex* top);
+void push_conex(Node_Conex** top, Node *v);
+Node* pop_conex(Node_Conex **top);							--> same but for the other type of stack
+void deleteStack_conex(Node_Conex** top);
+void fprintStack_conex(Node_Conex* top, FILE* f_out);
+void printStack_conex(Node_Conex* top);
+void invertStack_conex(Node_Conex**top);
+
+void preord_afis(T_Node *root, FILE *fout, int lin, int col);				-->
+char* rule1(char *matr, int lin, int col, Node **top);					-->makes the matrix for rule 1
+char* rule2(char *matr, int lin, int col, Node **top);					-->makes the matrix for rule 2
+void create_succ(T_Node* root, int nr_gen);						-->creates the tree
+void preord_rez_gen(T_Node *root, int lin, int col, char *grila);			-->solves task3
+void deleteTree(T_Node** root);								-->
+void changeNprint(FILE *f,char *grila, int lin, int col, T_Node *root);			-->prints task3
+
+int isEmpty_conex(const Node_Conex *top);
+void push_conex(Node_Conex** top, Node *v);
+Node* pop_conex(Node_Conex **top)
+
+void deleteStack_conex(Node_Conex** top);
+int inViata(char *grila, int lin, int col, Poz **elemente_graph);			-->remembers the vertices of g
+int vecini(Poz a, Poz b);								-->checks if 2 cells are neighbours
+void createGfromVector(Poz *elemente_graph, int vii, GRAPH *g);				-->creates graph
+void DFS_scan(GRAPH *g, int visited[], int i, Node **top);				-->
+int DFS(GRAPH *g, Node_Conex **top_conex);
+int convertStack2Vector(Node **top, int **v);
+int bk(int current, int *nr_vizitati, int *visited, GRAPH *g, int *de_vizitat, int nr_de_vizitat, int **path);
+int hamilton(GRAPH *g, int *de_vizitat, int nr_de_vizitat, int **path);			-->checks if a conex component is a hamiltonian path and remembers the path
+void cpy_vector(int **v, int **u, int nr);
+void preord_rez_gen4task4(T_Node *root, int lin, int col, char *grila, FILE *f_out); //pentru task4
+
+
+
+void rez_generatie_bonus(char *matr, int col, int lin, Node_Conex **top, FILE *bonus); -->initial matrix from stack of stacks
